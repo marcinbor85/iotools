@@ -44,6 +44,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/tests/test_iocantp.o \
 	${OBJECTDIR}/src/tests/test_ioslip.o \
 	${OBJECTDIR}/src/tests/tests.o \
+	${OBJECTDIR}/src/tools/ihex.o \
 	${OBJECTDIR}/src/tools/queue.o \
 	${OBJECTDIR}/src/tools/queuefifo.o
 
@@ -116,6 +117,11 @@ ${OBJECTDIR}/src/tests/tests.o: src/tests/tests.c
 	${MKDIR} -p ${OBJECTDIR}/src/tests
 	${RM} "$@.d"
 	$(COMPILE.c) -g -Werror -Isrc -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/tests/tests.o src/tests/tests.c
+
+${OBJECTDIR}/src/tools/ihex.o: src/tools/ihex.c 
+	${MKDIR} -p ${OBJECTDIR}/src/tools
+	${RM} "$@.d"
+	$(COMPILE.c) -g -Werror -Isrc -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/tools/ihex.o src/tools/ihex.c
 
 ${OBJECTDIR}/src/tools/queue.o: src/tools/queue.c 
 	${MKDIR} -p ${OBJECTDIR}/src/tools

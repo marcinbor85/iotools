@@ -28,7 +28,8 @@ THE SOFTWARE.
 #include <stddef.h>
 #include <stdio.h>
 
-static int8_t parse_first_frame(struct iocantp_object *cantp, uint8_t *data) {
+static int8_t parse_first_frame(struct iocantp_object *cantp, uint8_t *data)
+{
 	switch (cantp->buf[0] & 0xC0) {
 	case 0x00:
 		cantp->rx_size = cantp->buf[0] & 0x3F;
@@ -55,7 +56,8 @@ static int8_t parse_first_frame(struct iocantp_object *cantp, uint8_t *data) {
 	return 0;
 }
 
-static int8_t parse_next_frame(struct iocantp_object *cantp, uint8_t *data) {
+static int8_t parse_next_frame(struct iocantp_object *cantp, uint8_t *data)
+{
 	uint32_t to_receive;
 	
 	switch (cantp->buf[0] & 0xC0) {

@@ -35,16 +35,19 @@ THE SOFTWARE.
 #define IOSLIP_ESCAPED_END      0xCB
 #define IOSLIP_ESCAPED_ESCAPE   0xCC
 
-static int8_t put_char(struct io_comm_interface *comm, uint8_t ch) {
+static int8_t put_char(struct io_comm_interface *comm, uint8_t ch)
+{
 	return comm->put(&ch, 1);
 }
 
-static int8_t get_char(struct io_comm_interface *comm, uint8_t *ch) {
+static int8_t get_char(struct io_comm_interface *comm, uint8_t *ch)
+{
 	uint32_t i;
 	return comm->get(ch, &i);
 }
 
-static int8_t parse_data_byte(struct ioslip_object *slip, uint8_t ch, uint8_t *data) {
+static int8_t parse_data_byte(struct ioslip_object *slip, uint8_t ch, uint8_t *data)
+{
 	switch (ch) {
 	case IOSLIP_BYTE_START:
 		slip->rx_count = 0;
@@ -63,7 +66,8 @@ static int8_t parse_data_byte(struct ioslip_object *slip, uint8_t ch, uint8_t *d
 	return 0;
 }
 
-static int8_t parse_escaped_byte(struct ioslip_object *slip, uint8_t ch, uint8_t *data) {
+static int8_t parse_escaped_byte(struct ioslip_object *slip, uint8_t ch, uint8_t *data)
+{
 	switch (ch) {
 	case IOSLIP_ESCAPED_START:
 		data[slip->rx_count] = IOSLIP_BYTE_START;

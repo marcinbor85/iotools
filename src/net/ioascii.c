@@ -30,16 +30,19 @@ THE SOFTWARE.
 #define IOASCII_BYTE_START	':'
 #define IOASCII_BYTE_END        '\n'
 
-static int8_t put_char(struct io_comm_interface *comm, uint8_t ch) {
+static int8_t put_char(struct io_comm_interface *comm, uint8_t ch)
+{
 	return comm->put(&ch, 1);
 }
 
-static int8_t get_char(struct io_comm_interface *comm, uint8_t *ch) {
+static int8_t get_char(struct io_comm_interface *comm, uint8_t *ch)
+{
 	uint32_t i;
 	return comm->get(ch, &i);
 }
 
-static int8_t parse_high_nibble(struct ioascii_object *ascii, uint8_t ch, uint8_t *data) {
+static int8_t parse_high_nibble(struct ioascii_object *ascii, uint8_t ch, uint8_t *data)
+{
 	if (ch >= '0' && ch <= '9') {
 		data[ascii->rx_count] = (ch-'0') << 4;
 		ascii->rx_state = 2;
@@ -60,7 +63,8 @@ static int8_t parse_high_nibble(struct ioascii_object *ascii, uint8_t ch, uint8_
 	return 0;
 }
 
-static void parse_low_nibble(struct ioascii_object *ascii, uint8_t ch, uint8_t *data) {
+static void parse_low_nibble(struct ioascii_object *ascii, uint8_t ch, uint8_t *data)
+{
 	if (ch >= '0' && ch <= '9') {
 		data[ascii->rx_count] |= (ch-'0');
 		if (++ascii->rx_count >= ascii->max_rx_size) ascii->rx_state = 0;
