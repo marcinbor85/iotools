@@ -28,26 +28,71 @@ THE SOFTWARE.
 #include <stddef.h>
 #include <stdio.h>
 
-static int8_t parse_first_frame(struct iocantp_object *cantp, uint8_t *data) {
+static int8_t recv_single_frame(struct iocantp_object *cantp, uint8_t *data)
+{
+	cantp->rx_size = cantp->buf[0] & 0x3F;
+	if (cantp->rx_size > cantp->max_rx_size) return 0;
+	if (cantp->rx_size > (cantp->max_frame_size - 1)) return 0;
+	if (cantp->rx_size > (cantp->data_len - 1)) return 0;
+
+	memcpy(data, &cantp->buf[1], cantp->rx_size);
+	
+	return 1;
+}
+
+static int8_t recv_multi_frame(struct iocantp_object *cantp, uint8_t *data)
+{
+	cantp->rx_size = (((cantp->buf[0] & 0x3F) << 8) | ((cantp->buf[1]) & 0xFF)) & 0x3FFF;
+	if (cantp->rx_size > cantp->max_rx_size) return 0;
+	if (cantp->rx_size < cantp->max_frame_size) return 0;
+	if (cantp->data_len < cantp->max_frame_size) return 0;
+
+	memcpy(data, &cantp->buf[2], cantp->max_frame_size - 2);
+	cantp->rx_count = cantp->max_frame_size - 2;
+	cantp->rx_cntr = 1;
+	
+	return 1;
+}
+
+static int8_t recv_next_frame(struct iocantp_object *cantp, uint8_t *data)
+{
+	uint32_t to_receive;
+	
+	if ((cantp->buf[0] & 0x3F) != cantp->rx_cntr) {
+		cantp->rx_state = 0;
+		return 0;
+	}
+
+	to_receive = cantp->rx_size - cantp->rx_count;
+	if (to_receive > (cantp->max_frame_size - 1)) to_receive = cantp->max_frame_size - 1;
+
+	if ((cantp->data_len - 1) < to_receive) {
+		cantp->rx_state = 0;
+		return 0;
+	}
+
+	memcpy(&data[cantp->rx_count], &cantp->buf[1], to_receive);
+	cantp->rx_count += to_receive;
+	cantp->rx_cntr++;
+	cantp->rx_cntr &= 0x3F;
+
+	if (cantp->rx_count == cantp->rx_size) {
+		cantp->rx_state = 0;
+		return 1;
+	}
+	
+	return 0;
+}
+
+
+static int8_t parse_first_frame(struct iocantp_object *cantp, uint8_t *data)
+{
 	switch (cantp->buf[0] & 0xC0) {
 	case 0x00:
-		cantp->rx_size = cantp->buf[0] & 0x3F;
-		if (cantp->rx_size > cantp->max_rx_size) break;
-		if (cantp->rx_size > (cantp->max_frame_size - 1)) break;
-		if (cantp->rx_size > (cantp->data_len - 1)) break;
-
-		memcpy(data, &cantp->buf[1], cantp->rx_size);
-		return 1;
+		if (recv_single_frame(cantp, data) != 0) return 1;
+		break;
 	case 0x40:
-		cantp->rx_size = (((cantp->buf[0] & 0x3F) << 8) | ((cantp->buf[1]) & 0xFF)) & 0x3FFF;
-		if (cantp->rx_size > cantp->max_rx_size) break;
-		if (cantp->rx_size < cantp->max_frame_size) break;
-		if (cantp->data_len < cantp->max_frame_size) break;
-
-		memcpy(data, &cantp->buf[2], cantp->max_frame_size - 2);
-		cantp->rx_count = cantp->max_frame_size - 2;
-		cantp->rx_cntr = 1;
-		cantp->rx_state = 1;
+		if (recv_multi_frame(cantp, data) != 0) cantp->rx_state = 1;
 		break;
 	default:
 		break;
@@ -55,53 +100,21 @@ static int8_t parse_first_frame(struct iocantp_object *cantp, uint8_t *data) {
 	return 0;
 }
 
-static int8_t parse_next_frame(struct iocantp_object *cantp, uint8_t *data) {
-	uint32_t to_receive;
-	
+static int8_t parse_next_frame(struct iocantp_object *cantp, uint8_t *data)
+{
 	switch (cantp->buf[0] & 0xC0) {
 	case 0x80:
-		if ((cantp->buf[0] & 0x3F) != cantp->rx_cntr) {
-			cantp->rx_state = 0;
-			break;
-		}
-
-		to_receive = cantp->rx_size - cantp->rx_count;
-		if (to_receive > (cantp->max_frame_size - 1)) to_receive = cantp->max_frame_size - 1;
-
-		if ((cantp->data_len - 1) < to_receive) {
-			cantp->rx_state = 0;
-			break;
-		}
-
-		memcpy(&data[cantp->rx_count], &cantp->buf[1], to_receive);
-		cantp->rx_count += to_receive;
-		cantp->rx_cntr++;
-		cantp->rx_cntr &= 0x3F;
-
-		if (cantp->rx_count == cantp->rx_size) {
+		if (recv_next_frame(cantp, data) != 0) return 1;
+		break;
+	case 0x40:
+		recv_multi_frame(cantp, data);
+		break;
+	case 0x00:
+		if (recv_single_frame(cantp, data) != 0) {
 			cantp->rx_state = 0;
 			return 1;
 		}
 		break;
-	case 0x40:
-		cantp->rx_size = (((cantp->buf[0] & 0x3F) << 8) | ((cantp->buf[1]) & 0xFF)) & 0x3FFF;
-		if (cantp->rx_size > cantp->max_rx_size) break;
-		if (cantp->rx_size < cantp->max_frame_size) break;
-		if (cantp->data_len < cantp->max_frame_size) break;
-
-		memcpy(data, &cantp->buf[2], cantp->max_frame_size - 2);
-		cantp->rx_count = cantp->max_frame_size - 2;
-		cantp->rx_cntr = 1;
-		break;
-	case 0x00:
-		cantp->rx_size = cantp->buf[0] & 0x3F;
-		if (cantp->rx_size > cantp->max_rx_size) break;
-		if (cantp->rx_size > (cantp->max_frame_size - 1)) break;
-		if (cantp->rx_size > (cantp->data_len - 1)) break;
-
-		memcpy(data, &cantp->buf[1], cantp->rx_size);
-		cantp->rx_state = 0;
-		return 1;
 	default:
 		cantp->rx_state = 0;
 	}
