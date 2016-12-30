@@ -24,6 +24,7 @@
           <itemPath>src/net/ioslip.h</itemPath>
         </logicalFolder>
         <logicalFolder name="tests" displayName="tests" projectFiles="true">
+          <itemPath>src/tests/test_ihex.c</itemPath>
           <itemPath>src/tests/test_io.c</itemPath>
           <itemPath>src/tests/test_ioascii.c</itemPath>
           <itemPath>src/tests/test_iocantp.c</itemPath>
@@ -91,6 +92,8 @@
       <item path="src/net/ioslip.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="src/net/ioslip.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/tests/test_ihex.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="src/tests/test_io.c" ex="false" tool="0" flavor2="0">
       </item>

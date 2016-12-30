@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
+ */
 
 #include "tests.h"
 
@@ -56,21 +56,21 @@ static int io_create(void)
 	ASSERT(io_init(&io, &iface2) == -1);
 	ASSERT(io_init(&io, &iface1) == -1);
 	ASSERT(io_init(&io, &iface) == 0);
-	
+
 	ASSERT(io.comm == &iface);
 	ASSERT(io.read == NULL);
-	ASSERT(io.write == NULL);	
-	
+	ASSERT(io.write == NULL);
+
 	return 0;
 }
 
 static int io_api(void)
-{	
+{
 	ASSERT(io_init(&io, &iface) == 0);
-	
+
 	ASSERT(io_read(&io, data, &size) == -1);
 	ASSERT(io_write(&io, data, size) == -1);
-	
+
 	return 0;
 }
 
@@ -78,6 +78,6 @@ int test_io(void)
 {
 	VERIFY(io_create);
 	VERIFY(io_api);
-	
+
 	return 0;
 }

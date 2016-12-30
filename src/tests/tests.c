@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
+ */
 
 #include "tests.h"
 
@@ -30,6 +30,7 @@ extern int test_iocantp(void);
 extern int test_ioslip(void);
 extern int test_ioascii(void);
 extern int test_io(void);
+extern int test_ihex(void);
 
 static int all_tests(void)
 {
@@ -37,6 +38,7 @@ static int all_tests(void)
 	INCLUDE(test_ioascii);
 	INCLUDE(test_ioslip);
 	INCLUDE(test_iocantp);
+	INCLUDE(test_ihex);
 
 	return 0;
 }

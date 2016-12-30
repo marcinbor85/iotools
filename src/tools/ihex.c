@@ -20,81 +20,97 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
+ */
 
 #include "ihex.h"
 
 #include <stddef.h>
 
-static int8_t check_crc()
+static uint8_t check_crc(uint8_t *data, uint32_t size)
 {
-	
+	uint8_t sum = 0;
+	while (size-- > 0) sum += *data++;
+	return sum;
 }
 
-int8_t ihex_parse_line(struct ihex_object *ihex, uint8_t *line, uint8_t size)
+int8_t ihex_parse_line(struct ihex_object *ihex, uint8_t *line_data, uint32_t line_size)
 {
-	uint8_t data_len;
-	uint8_t type;
-	uint8_t line_crc;
-	uint16_t line_adr;
 	uint32_t adr;
-	
-	if (size < 5) return 0;	
-	
-	ihex->line_size = size;
-	ihex->line = line;
-	
-	data_len = ihex->line[0];
-	line_adr = (((ihex->line[1] << 8) & 0xFF00) | ((ihex->line[2]) & 0x00FF)) & 0xFFFF;
-	type = ihex->line[3];	
-	line_crc = ihex->line[4];
-	
-	check_crc();
-	
-	switch (type) {
-	case 0x00:
-		break;
-	case 0x01:
-		if (data_len != 0) return 0;
-		if (line_adr != 0) return 0;
-		
-		ihex->listeners->end(ihex);
-		break;
-	case 0x04:
-		ihex->address = ((ihex->line[1] << 24) | (ihex->line[2] << 16)) & 0xFFFF0000;
-		break;
-	case 0x05:
-		if (data_len != 4) return 0;
-		if (line_adr != 0) return 0;
-		
-		if (ihex->listeners->start != NULL) {
-			adr = ((ihex->line[1] << 24) | (ihex->line[2] << 16)) 
-			ihex->listeners->start(ihex, adr);
-		}
-		break;
-	default:
-		break;
+
+	struct ihex_line_data *line = &ihex->line;
+
+	if (line_size < 5)
+		return -1;
+
+	if (check_crc(line_data, line_size) != 0)
+		return -1;
+
+	line->data_size = line_data[0];
+	line->address = (((line_data[1] << 8) & 0xFF00) | ((line_data[2]) & 0x00FF)) & 0xFFFF;
+	line->type = line_data[3];
+
+	if (line_size == 5) {
+		line->data = NULL;
+	} else {
+		line->data = &line_data[4];
 	}
 	
-	return 1;
+	if (line->data_size != line_size - 5)
+		return -1;
+
+	switch (line->type) {
+	case 0x00:
+		if (line->data_size == 0)
+			return -1;
+
+		adr = line->address + ihex->address;
+		ihex->iface->data(ihex, adr, ihex->line.data, ihex->line.data_size);
+		break;
+	case 0x01:
+		if (line->data_size != 0)
+			return -1;
+		if (line->address != 0)
+			return -1;
+
+		ihex->iface->end(ihex);
+		break;
+	case 0x04:
+		if (line->data_size != 2)
+			return -1;
+		if (line->address != 0)
+			return -1;
+		
+		ihex->address = (line->data[0] << 24) | (line->data[1] << 16);
+		break;
+	default:
+		if (ihex->iface->custom != NULL)
+			ihex->iface->custom(ihex, line);
+		break;
+	}
+
+	return 0;
 }
 
 void ihex_reset(struct ihex_object *ihex)
 {
 	ihex->address = 0;
-	ihex->line = NULL;
-	ihex->line_size = 0;
+	ihex->line.address = 0;
+	ihex->line.data = NULL;
+	ihex->line.data_size = 0;
+	ihex->line.type = 0;
 }
 
-int8_t ihex_init(struct ihex_object *ihex, struct ihex_line_listeners *lst)
+int8_t ihex_init(struct ihex_object *ihex, struct ihex_line_interface *iface)
 {
 	if (ihex == NULL) return -1;
-	if (lst == NULL) return -1;
-	
-	if (lst->data == NULL) return -1;
-	if (lst->end == NULL) return -1;
-	
-	ihex->listeners = lst;
-	
+	if (iface == NULL) return -1;
+
+	if (iface->data == NULL) return -1;
+	if (iface->end == NULL) return -1;
+
+	ihex->iface = iface;
+
 	ihex_reset(ihex);
+
+	return 0;
 }

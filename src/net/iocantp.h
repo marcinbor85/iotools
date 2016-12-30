@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
+ */
 
 #ifndef IOCANTP_H
 #define IOCANTP_H
@@ -28,15 +28,15 @@ THE SOFTWARE.
 #include "io.h"
 
 struct iocantp_object {
-        struct io_object io;
-        uint8_t *buf;
-        uint32_t data_len;
-        uint32_t max_frame_size;
-        uint32_t max_rx_size;
-        uint8_t rx_state;
-        uint8_t rx_cntr;
-        uint32_t rx_count;
-        uint32_t rx_size;
+	struct io_object io;
+	uint8_t *buf;
+	uint32_t data_len;
+	uint32_t max_frame_size;
+	uint32_t max_rx_size;
+	uint8_t rx_state;
+	uint8_t rx_cntr;
+	uint32_t rx_count;
+	uint32_t rx_size;
 };
 
 int8_t iocantp_init(void *self, struct io_comm_interface *comm, uint8_t *buf, uint32_t max_frame_size, uint32_t max_rx_size);

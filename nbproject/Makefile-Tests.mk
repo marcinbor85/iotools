@@ -39,6 +39,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/net/ioascii.o \
 	${OBJECTDIR}/src/net/iocantp.o \
 	${OBJECTDIR}/src/net/ioslip.o \
+	${OBJECTDIR}/src/tests/test_ihex.o \
 	${OBJECTDIR}/src/tests/test_io.o \
 	${OBJECTDIR}/src/tests/test_ioascii.o \
 	${OBJECTDIR}/src/tests/test_iocantp.o \
@@ -92,6 +93,11 @@ ${OBJECTDIR}/src/net/ioslip.o: src/net/ioslip.c
 	${MKDIR} -p ${OBJECTDIR}/src/net
 	${RM} "$@.d"
 	$(COMPILE.c) -g -Werror -Isrc -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/net/ioslip.o src/net/ioslip.c
+
+${OBJECTDIR}/src/tests/test_ihex.o: src/tests/test_ihex.c 
+	${MKDIR} -p ${OBJECTDIR}/src/tests
+	${RM} "$@.d"
+	$(COMPILE.c) -g -Werror -Isrc -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/tests/test_ihex.o src/tests/test_ihex.c
 
 ${OBJECTDIR}/src/tests/test_io.o: src/tests/test_io.c 
 	${MKDIR} -p ${OBJECTDIR}/src/tests

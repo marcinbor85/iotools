@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
+ */
 
 #include "queue.h"
 
@@ -28,43 +28,43 @@ THE SOFTWARE.
 
 int8_t queue_init(void *self, void *buf, uint32_t capacity, uint32_t item_size)
 {
-        struct queue_object *queue = self;
-        
-        if (self == NULL) return -1;
-        if (buf == NULL) return -1;
-        if (capacity == 0) return -1;
-        if (item_size == 0) return -1;
+	struct queue_object *queue = self;
 
-        queue->buf = buf;
-        queue->count = 0;
-        queue->capacity = capacity;
-        queue->item_size = item_size;
-        queue->put = NULL;
-        queue->get = NULL;
+	if (self == NULL) return -1;
+	if (buf == NULL) return -1;
+	if (capacity == 0) return -1;
+	if (item_size == 0) return -1;
 
-        return 0;
+	queue->buf = buf;
+	queue->count = 0;
+	queue->capacity = capacity;
+	queue->item_size = item_size;
+	queue->put = NULL;
+	queue->get = NULL;
+
+	return 0;
 }
 
 int8_t queue_put(void *self, void *item)
 {
-        struct queue_object *queue = self;
-        
-        if (self == NULL) return -1;
-        if (item == NULL) return -1;
-        
-        if (queue->put == NULL) return -1;
-        
-        return queue->put(queue, item);
+	struct queue_object *queue = self;
+
+	if (self == NULL) return -1;
+	if (item == NULL) return -1;
+
+	if (queue->put == NULL) return -1;
+
+	return queue->put(queue, item);
 }
 
 int8_t queue_get(void *self, void *item)
 {
-        struct queue_object *queue = self;
-        
-        if (self == NULL) return -1;
-        if (item == NULL) return -1;
-        
-        if (queue->get == NULL) return -1;
-        
-        return queue->get(queue, item);
+	struct queue_object *queue = self;
+
+	if (self == NULL) return -1;
+	if (item == NULL) return -1;
+
+	if (queue->get == NULL) return -1;
+
+	return queue->get(queue, item);
 }

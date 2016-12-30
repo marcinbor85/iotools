@@ -20,13 +20,12 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
+ */
 
 #include "iocantp.h"
 
 #include <string.h>
 #include <stddef.h>
-#include <stdio.h>
 
 static int8_t parse_first_frame(struct iocantp_object *cantp, uint8_t *data)
 {
@@ -59,7 +58,7 @@ static int8_t parse_first_frame(struct iocantp_object *cantp, uint8_t *data)
 static int8_t parse_next_frame(struct iocantp_object *cantp, uint8_t *data)
 {
 	uint32_t to_receive;
-	
+
 	switch (cantp->buf[0] & 0xC0) {
 	case 0x80:
 		if ((cantp->buf[0] & 0x3F) != cantp->rx_cntr) {
@@ -112,15 +111,15 @@ static int8_t parse_next_frame(struct iocantp_object *cantp, uint8_t *data)
 
 static int8_t read(void *self, uint8_t *data, uint32_t *size)
 {
-        struct iocantp_object *cantp = self;
-        struct io_object *io = &cantp->io;
+	struct iocantp_object *cantp = self;
+	struct io_object *io = &cantp->io;
 	struct io_comm_interface *comm = io->comm;
-	
+
 	while (comm->get(cantp->buf, &cantp->data_len) > 0) {
 		if (cantp->data_len == 0) continue;
-		
+
 		switch (cantp->rx_state) {
-		case 0:	
+		case 0:
 			if (parse_first_frame(cantp, data) != 0) {
 				*size = cantp->rx_size;
 				return 1;
@@ -130,23 +129,23 @@ static int8_t read(void *self, uint8_t *data, uint32_t *size)
 			if (parse_next_frame(cantp, data) != 0) {
 				*size = cantp->rx_size;
 				return 1;
-			}			
+			}
 			break;
 		}
 	}
-        return 0;
+	return 0;
 }
 
 static int8_t write(void *self, uint8_t *data, uint32_t size)
 {
-        struct iocantp_object *cantp = self;
-        struct io_object *io = &cantp->io;
+	struct iocantp_object *cantp = self;
+	struct io_object *io = &cantp->io;
 	struct io_comm_interface *comm = io->comm;
-	
+
 	uint32_t i;
 	uint32_t sended;
 	uint32_t to_send;
-	
+
 	if (size <= (cantp->max_frame_size - 1)) {
 		cantp->buf[0] = size;
 		memcpy(&cantp->buf[1], data, size);
@@ -154,7 +153,7 @@ static int8_t write(void *self, uint8_t *data, uint32_t size)
 	} else if (size <= 0x3FFF) {
 		sended = 0;
 		cantp->buf[0] = 0x40 | ((size >> 8) & 0x3F);
-		cantp->buf[1] = size & 0xFF;		
+		cantp->buf[1] = size & 0xFF;
 		memcpy(&cantp->buf[2], data, cantp->max_frame_size - 2);
 		sended = cantp->max_frame_size - 2;
 		if (comm->put(cantp->buf, cantp->max_frame_size) != 1) return 0;
@@ -170,21 +169,21 @@ static int8_t write(void *self, uint8_t *data, uint32_t size)
 			if (comm->put(cantp->buf, to_send + 1) != 1) return 0;
 			sended += to_send;
 			i++;
-		}		
+		}
 	} else {
 		return 0;
 	}
-	
-        return 1;
+
+	return 1;
 }
 
 int8_t iocantp_init(void *self, struct io_comm_interface *comm, uint8_t *buf, uint32_t max_frame_size, uint32_t max_rx_size)
 {
-        struct iocantp_object *cantp = self;
-        struct io_object *io = &cantp->io;
-        
-        if (io_init(self, comm) != 0) return -1;
-        
+	struct iocantp_object *cantp = self;
+	struct io_object *io = &cantp->io;
+
+	if (io_init(self, comm) != 0) return -1;
+
 	if (buf == NULL) return -1;
 	if ((max_frame_size < 8) || (max_frame_size > 64)) return -1;
 	if (max_rx_size == 0) return -1;
@@ -197,9 +196,9 @@ int8_t iocantp_init(void *self, struct io_comm_interface *comm, uint8_t *buf, ui
 	cantp->rx_count = 0;
 	cantp->rx_size = 0;
 	cantp->rx_cntr = 0;
-        
-        io->read = read;
-        io->write = write;
-        
-        return 0;
+
+	io->read = read;
+	io->write = write;
+
+	return 0;
 }

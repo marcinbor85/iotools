@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
+ */
 
 #include "tests.h"
 
@@ -130,10 +130,10 @@ static int8_t get(uint8_t *data, uint32_t *size)
 		{0x08, 0xBF, 0xB9, 0xBA, 0xBB, 0xBC, 0xBD, 0xBE, 0xBF},
 		{0x08, 0x80, 0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6},
 		{0x05, 0x04, 0x01, 0x02, 0x03, 0x04, 0x00, 0x00, 0x00},
-		{0x03, 0x02, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00},		
+		{0x03, 0x02, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00},
 	};
-	
-	if (p < sizeof(buf)/9) {
+
+	if (p < sizeof(buf) / 9) {
 		memcpy(data, &buf[p][1], 8);
 		*size = buf[p][0];
 		p++;
@@ -152,17 +152,17 @@ static int iocantp_create(void)
 	ASSERT(iocantp_init(&io, &iface, NULL, 8, 1024) == -1);
 	ASSERT(iocantp_init(&io, &iface, buf_8, 0, 1024) == -1);
 	ASSERT(iocantp_init(&io, &iface, buf_8, 8, 1024) == 0);
-	
+
 	ASSERT(iocantp_init(&io, &iface, buf_8, 1, 1024) == -1);
 	ASSERT(iocantp_init(&io, &iface, buf_8, 32, 1024) == 0);
 	ASSERT(iocantp_init(&io, &iface, buf_8, 64, 1024) == 0);
 	ASSERT(iocantp_init(&io, &iface, buf_8, 65, 1024) == -1);
 	ASSERT(iocantp_init(&io, &iface, buf_8, 8, 1024) == 0);
-	
+
 	ASSERT(io.io.comm == &iface);
 	ASSERT(io.io.read != NULL);
 	ASSERT(io.io.write != NULL);
-	
+
 	ASSERT(io.max_frame_size == 8);
 	ASSERT(io.buf == buf_8);
 	ASSERT(io.data_len == 0);
@@ -170,7 +170,7 @@ static int iocantp_create(void)
 	ASSERT(io.rx_size == 0);
 	ASSERT(io.rx_count == 0);
 	ASSERT(io.rx_cntr == 0);
-	
+
 	return 0;
 }
 
@@ -179,19 +179,19 @@ static int iocantp_api_read(void)
 	uint8_t buf[1024];
 	uint32_t size;
 	uint32_t i;
-	
+
 	ASSERT(iocantp_init(&io, &iface, buf_8, 8, 1024) == 0);
-	
+
 	ASSERT(io_read(&io, NULL, 0) == -1);
 	ASSERT(io_read(&io, NULL, &size) == -1);
 	ASSERT(io_read(&io, buf, 0) == -1);
-	
+
 	size = 0;
 	ASSERT(io_read(&io, buf, &size) == 1);
 	ASSERT(size == 2);
 	ASSERT(buf[0] == 0x01);
-	ASSERT(buf[1] == 0x02);	
-	
+	ASSERT(buf[1] == 0x02);
+
 	size = 0;
 	ASSERT(io_read(&io, buf, &size) == 1);
 	ASSERT(size == 0);
@@ -200,34 +200,34 @@ static int iocantp_api_read(void)
 	ASSERT(io_read(&io, buf, &size) == 1);
 	ASSERT(size == 7);
 	ASSERT(buf[0] == 0x01);
-	ASSERT(buf[1] == 0x02);	
+	ASSERT(buf[1] == 0x02);
 	ASSERT(buf[2] == 0x03);
-	ASSERT(buf[3] == 0x04);	
+	ASSERT(buf[3] == 0x04);
 	ASSERT(buf[4] == 0x05);
-	ASSERT(buf[5] == 0x06);	
+	ASSERT(buf[5] == 0x06);
 	ASSERT(buf[6] == 0x07);
-	
+
 	size = 0;
 	ASSERT(io_read(&io, buf, &size) == 1);
 	ASSERT(size == 8);
 	ASSERT(buf[0] == 0x01);
-	ASSERT(buf[1] == 0x02);	
+	ASSERT(buf[1] == 0x02);
 	ASSERT(buf[2] == 0x03);
-	ASSERT(buf[3] == 0x04);	
+	ASSERT(buf[3] == 0x04);
 	ASSERT(buf[4] == 0x05);
-	ASSERT(buf[5] == 0x06);	
+	ASSERT(buf[5] == 0x06);
 	ASSERT(buf[6] == 0x07);
 	ASSERT(buf[7] == 0x08);
-	
+
 	size = 0;
 	ASSERT(io_read(&io, buf, &size) == 1);
 	ASSERT(size == 13);
 	ASSERT(buf[0] == 0x11);
-	ASSERT(buf[1] == 0x12);	
+	ASSERT(buf[1] == 0x12);
 	ASSERT(buf[2] == 0x13);
-	ASSERT(buf[3] == 0x14);	
+	ASSERT(buf[3] == 0x14);
 	ASSERT(buf[4] == 0x15);
-	ASSERT(buf[5] == 0x16);	
+	ASSERT(buf[5] == 0x16);
 	ASSERT(buf[6] == 0x17);
 	ASSERT(buf[7] == 0x18);
 	ASSERT(buf[8] == 0x19);
@@ -235,27 +235,27 @@ static int iocantp_api_read(void)
 	ASSERT(buf[10] == 0x1B);
 	ASSERT(buf[11] == 0x1C);
 	ASSERT(buf[12] == 0x1D);
-	
+
 	size = 0;
 	ASSERT(io_read(&io, buf, &size) == 1);
 	ASSERT(size == 4);
 	ASSERT(buf[0] == 0x04);
-	ASSERT(buf[1] == 0x03);	
+	ASSERT(buf[1] == 0x03);
 	ASSERT(buf[2] == 0x02);
-	ASSERT(buf[3] == 0x01);	
-	
+	ASSERT(buf[3] == 0x01);
+
 	size = 0;
 	ASSERT(io_read(&io, buf, &size) == 1);
-	ASSERT(size == 64*7+6);
-	for (i = 0; i < 64*7+6; i++) ASSERT(buf[i] == (uint8_t)(i+1));
-	
+	ASSERT(size == 64 * 7 + 6);
+	for (i = 0; i < 64 * 7 + 6; i++) ASSERT(buf[i] == (uint8_t) (i + 1));
+
 	ASSERT(iocantp_init(&io, &iface, buf_8, 8, 2) == 0);
-	
+
 	size = 0;
 	ASSERT(io_read(&io, buf, &size) == 1);
 	ASSERT(size == 2);
 	ASSERT(buf[0] == 0x01);
-	ASSERT(buf[1] == 0x02);	
+	ASSERT(buf[1] == 0x02);
 
 	return 0;
 }
@@ -265,14 +265,14 @@ static int iocantp_api_write(void)
 	uint8_t buf[1024];
 	uint32_t size;
 	uint32_t i;
-	
+
 	ASSERT(iocantp_init(&io, &iface, buf_8, 8, 1024) == 0);
-	
+
 	ASSERT(io_write(&io, NULL, 0) == -1);
 	ASSERT(io_write(&io, NULL, 1) == -1);
 	ASSERT(io_write(&io, buf, 0) == -1);
-	
-	for (i = 0; i < 2; i++) buf[i] = i+1;
+
+	for (i = 0; i < 2; i++) buf[i] = i + 1;
 	size = 2;
 	buf_tx_size = 0;
 	ASSERT(io_write(&io, buf, size) == 1);
@@ -280,8 +280,8 @@ static int iocantp_api_write(void)
 	ASSERT(buf_tx[0] == 0x02);
 	ASSERT(buf_tx[1] == 0x01);
 	ASSERT(buf_tx[2] == 0x02);
-	
-	for (i = 0; i < 7; i++) buf[i] = i+1;
+
+	for (i = 0; i < 7; i++) buf[i] = i + 1;
 	size = 7;
 	buf_tx_size = 0;
 	ASSERT(io_write(&io, buf, size) == 1);
@@ -294,14 +294,14 @@ static int iocantp_api_write(void)
 	ASSERT(buf_tx[5] == 0x05);
 	ASSERT(buf_tx[6] == 0x06);
 	ASSERT(buf_tx[7] == 0x07);
-	
-	for (i = 0; i < 8; i++) buf[i] = i+1;
+
+	for (i = 0; i < 8; i++) buf[i] = i + 1;
 	size = 8;
 	buf_tx_size = 0;
 	ASSERT(io_write(&io, buf, size) == 1);
 	ASSERT(buf_tx_size == 11);
 	ASSERT(buf_tx[0] == 0x40);
-	ASSERT(buf_tx[1] == 0x08);	
+	ASSERT(buf_tx[1] == 0x08);
 	ASSERT(buf_tx[2] == 0x01);
 	ASSERT(buf_tx[3] == 0x02);
 	ASSERT(buf_tx[4] == 0x03);
@@ -311,14 +311,14 @@ static int iocantp_api_write(void)
 	ASSERT(buf_tx[8] == 0x81);
 	ASSERT(buf_tx[9] == 0x07);
 	ASSERT(buf_tx[10] == 0x08);
-	
-	for (i = 0; i < 14; i++) buf[i] = i+1;
+
+	for (i = 0; i < 14; i++) buf[i] = i + 1;
 	size = 14;
 	buf_tx_size = 0;
 	ASSERT(io_write(&io, buf, size) == 1);
 	ASSERT(buf_tx_size == 18);
 	ASSERT(buf_tx[0] == 0x40);
-	ASSERT(buf_tx[1] == 0x0E);	
+	ASSERT(buf_tx[1] == 0x0E);
 	ASSERT(buf_tx[2] == 0x01);
 	ASSERT(buf_tx[3] == 0x02);
 	ASSERT(buf_tx[4] == 0x03);
@@ -335,37 +335,37 @@ static int iocantp_api_write(void)
 	ASSERT(buf_tx[15] == 0x0D);
 	ASSERT(buf_tx[16] == 0x82);
 	ASSERT(buf_tx[17] == 0x0E);
-	
-	for (i = 0; i < 64*7+6; i++) buf[i] = i+1;
-	size = 64*7+6;
+
+	for (i = 0; i < 64 * 7 + 6; i++) buf[i] = i + 1;
+	size = 64 * 7 + 6;
 	buf_tx_size = 0;
 	ASSERT(io_write(&io, buf, size) == 1);
-	ASSERT(buf_tx_size == 65*8);
+	ASSERT(buf_tx_size == 65 * 8);
 	ASSERT(buf_tx[0] == 0x41);
-	ASSERT(buf_tx[1] == 0xC6);	
+	ASSERT(buf_tx[1] == 0xC6);
 	ASSERT(buf_tx[2] == 0x01);
 	ASSERT(buf_tx[3] == 0x02);
 	ASSERT(buf_tx[4] == 0x03);
 	ASSERT(buf_tx[5] == 0x04);
 	ASSERT(buf_tx[6] == 0x05);
 	ASSERT(buf_tx[7] == 0x06);
-	ASSERT(buf_tx[512-8] == 0xBF);
-	ASSERT(buf_tx[512-7] == 0xB9);
-	ASSERT(buf_tx[512-6] == 0xBA);
-	ASSERT(buf_tx[512-5] == 0xBB);
-	ASSERT(buf_tx[512-4] == 0xBC);
-	ASSERT(buf_tx[512-3] == 0xBD);
-	ASSERT(buf_tx[512-2] == 0xBE);
-	ASSERT(buf_tx[512-1] == 0xBF);
+	ASSERT(buf_tx[512 - 8] == 0xBF);
+	ASSERT(buf_tx[512 - 7] == 0xB9);
+	ASSERT(buf_tx[512 - 6] == 0xBA);
+	ASSERT(buf_tx[512 - 5] == 0xBB);
+	ASSERT(buf_tx[512 - 4] == 0xBC);
+	ASSERT(buf_tx[512 - 3] == 0xBD);
+	ASSERT(buf_tx[512 - 2] == 0xBE);
+	ASSERT(buf_tx[512 - 1] == 0xBF);
 	ASSERT(buf_tx[512] == 0x80);
-	ASSERT(buf_tx[512+1] == 0xC0);
-	ASSERT(buf_tx[512+2] == 0xC1);
-	ASSERT(buf_tx[512+3] == 0xC2);
-	ASSERT(buf_tx[512+4] == 0xC3);
-	ASSERT(buf_tx[512+5] == 0xC4);
-	ASSERT(buf_tx[512+6] == 0xC5);
-	ASSERT(buf_tx[512+7] == 0xC6);
-	
+	ASSERT(buf_tx[512 + 1] == 0xC0);
+	ASSERT(buf_tx[512 + 2] == 0xC1);
+	ASSERT(buf_tx[512 + 3] == 0xC2);
+	ASSERT(buf_tx[512 + 4] == 0xC3);
+	ASSERT(buf_tx[512 + 5] == 0xC4);
+	ASSERT(buf_tx[512 + 6] == 0xC5);
+	ASSERT(buf_tx[512 + 7] == 0xC6);
+
 	return 0;
 }
 
