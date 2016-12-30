@@ -24,37 +24,53 @@ THE SOFTWARE.
 
 #include "tests.h"
 
-int tests_run = 0;
+#include "tools/queue.h"
 
-extern int test_iocantp(void);
-extern int test_ioslip(void);
-extern int test_ioascii(void);
-extern int test_io(void);
-extern int test_ihex(void);
-extern int test_queue(void);
-extern int test_queuefifo(void);
+static struct queue_object queue;
+static uint8_t buffer[256];
 
-static int all_tests(void)
+static int queue_create(void)
 {
-	INCLUDE(test_io);
-	INCLUDE(test_ioascii);
-	INCLUDE(test_ioslip);
-	INCLUDE(test_iocantp);
-	INCLUDE(test_ihex);
-	INCLUDE(test_queue);
-	INCLUDE(test_queuefifo);
+	ASSERT(queue_init(NULL, buffer, 16, sizeof(char)) == -1);
+	ASSERT(queue_init(&queue, NULL, 16, sizeof(char)) == -1);
+	ASSERT(queue_init(&queue, buffer, 0, sizeof(char)) == -1);
+	ASSERT(queue_init(&queue, buffer, 16, 0) == -1);
+
+	ASSERT(queue_init(&queue, buffer, 16, sizeof(char)) == 0);
+
+	ASSERT(queue.buf == buffer);
+	ASSERT(queue.capacity == 16);
+	ASSERT(queue.item_size == sizeof(char));
+	ASSERT(queue.count == 0);
+	ASSERT(queue.get == NULL);
+	ASSERT(queue.put == NULL);
 
 	return 0;
 }
 
-int main(int argc, char **argv)
+static int queue_api(void)
 {
-	int result = all_tests();
-	if (result == 0) {
-		printf("PASSED\n");
-	}
-	printf("Tests run: %d\n", tests_run);
+	char ch = 0;
 
-	return result != 0;
+	ASSERT(queue_init(&queue, buffer, 16, 1) == 0);
+
+	ASSERT(queue_put(NULL, NULL) == -1);
+	ASSERT(queue_put(NULL, &ch) == -1);
+	ASSERT(queue_put(&queue, NULL) == -1);
+	ASSERT(queue_put(&queue, &ch) == -1);
+
+	ASSERT(queue_get(NULL, NULL) == -1);
+	ASSERT(queue_get(NULL, &ch) == -1);
+	ASSERT(queue_get(&queue, NULL) == -1);
+	ASSERT(queue_get(&queue, &ch) == -1);
+
+	return 0;
 }
 
+int test_queue(void)
+{
+	VERIFY(queue_create);
+	VERIFY(queue_api);
+
+	return 0;
+}

@@ -44,6 +44,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/tests/test_ioascii.o \
 	${OBJECTDIR}/src/tests/test_iocantp.o \
 	${OBJECTDIR}/src/tests/test_ioslip.o \
+	${OBJECTDIR}/src/tests/test_queue.o \
+	${OBJECTDIR}/src/tests/test_queuefifo.o \
 	${OBJECTDIR}/src/tests/tests.o \
 	${OBJECTDIR}/src/tools/ihex.o \
 	${OBJECTDIR}/src/tools/queue.o \
@@ -118,6 +120,16 @@ ${OBJECTDIR}/src/tests/test_ioslip.o: src/tests/test_ioslip.c
 	${MKDIR} -p ${OBJECTDIR}/src/tests
 	${RM} "$@.d"
 	$(COMPILE.c) -g -Werror -Isrc -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/tests/test_ioslip.o src/tests/test_ioslip.c
+
+${OBJECTDIR}/src/tests/test_queue.o: src/tests/test_queue.c 
+	${MKDIR} -p ${OBJECTDIR}/src/tests
+	${RM} "$@.d"
+	$(COMPILE.c) -g -Werror -Isrc -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/tests/test_queue.o src/tests/test_queue.c
+
+${OBJECTDIR}/src/tests/test_queuefifo.o: src/tests/test_queuefifo.c 
+	${MKDIR} -p ${OBJECTDIR}/src/tests
+	${RM} "$@.d"
+	$(COMPILE.c) -g -Werror -Isrc -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/tests/test_queuefifo.o src/tests/test_queuefifo.c
 
 ${OBJECTDIR}/src/tests/tests.o: src/tests/tests.c 
 	${MKDIR} -p ${OBJECTDIR}/src/tests
