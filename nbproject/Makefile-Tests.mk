@@ -39,11 +39,13 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/net/ioascii.o \
 	${OBJECTDIR}/src/net/iocantp.o \
 	${OBJECTDIR}/src/net/ioslip.o \
+	${OBJECTDIR}/src/tests/test_ihex.o \
 	${OBJECTDIR}/src/tests/test_io.o \
 	${OBJECTDIR}/src/tests/test_ioascii.o \
 	${OBJECTDIR}/src/tests/test_iocantp.o \
 	${OBJECTDIR}/src/tests/test_ioslip.o \
 	${OBJECTDIR}/src/tests/tests.o \
+	${OBJECTDIR}/src/tools/ihex.o \
 	${OBJECTDIR}/src/tools/queue.o \
 	${OBJECTDIR}/src/tools/queuefifo.o
 
@@ -92,6 +94,11 @@ ${OBJECTDIR}/src/net/ioslip.o: src/net/ioslip.c
 	${RM} "$@.d"
 	$(COMPILE.c) -g -Werror -Isrc -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/net/ioslip.o src/net/ioslip.c
 
+${OBJECTDIR}/src/tests/test_ihex.o: src/tests/test_ihex.c 
+	${MKDIR} -p ${OBJECTDIR}/src/tests
+	${RM} "$@.d"
+	$(COMPILE.c) -g -Werror -Isrc -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/tests/test_ihex.o src/tests/test_ihex.c
+
 ${OBJECTDIR}/src/tests/test_io.o: src/tests/test_io.c 
 	${MKDIR} -p ${OBJECTDIR}/src/tests
 	${RM} "$@.d"
@@ -116,6 +123,11 @@ ${OBJECTDIR}/src/tests/tests.o: src/tests/tests.c
 	${MKDIR} -p ${OBJECTDIR}/src/tests
 	${RM} "$@.d"
 	$(COMPILE.c) -g -Werror -Isrc -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/tests/tests.o src/tests/tests.c
+
+${OBJECTDIR}/src/tools/ihex.o: src/tools/ihex.c 
+	${MKDIR} -p ${OBJECTDIR}/src/tools
+	${RM} "$@.d"
+	$(COMPILE.c) -g -Werror -Isrc -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/tools/ihex.o src/tools/ihex.c
 
 ${OBJECTDIR}/src/tools/queue.o: src/tools/queue.c 
 	${MKDIR} -p ${OBJECTDIR}/src/tools

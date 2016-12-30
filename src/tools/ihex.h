@@ -22,16 +22,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 
-#ifndef TESTS_H
-#define TESTS_H
+#ifndef IHEX_H
+#define IHEX_H
 
-#include <stdio.h>
+#include <stdint.h>
 
-extern int tests_run;
+struct ihex_line_data {
+	uint8_t *data;
+	uint8_t data_size;
+	uint16_t address;
+	uint8_t type;
+};
 
-#define FAIL() printf("\nFailure in %s() line %d\n", __func__, __LINE__)
-#define ASSERT(test) do { if (!(test)) { FAIL(); return 1; } } while(0)
-#define VERIFY(test) do { int r = test(); tests_run++; if(r) return r; } while(0)
-#define INCLUDE(test) do { int r = test(); if(r) return r; } while(0)
+struct ihex_object {
+	uint32_t address;
+	struct ihex_line_data line;
+	struct ihex_line_interface *iface;
+};
 
-#endif /* TESTS_H */
+struct ihex_line_interface {
+	void (*data)(struct ihex_object *ihex, uint32_t adr, uint8_t *data, uint8_t size);
+	void (*custom)(struct ihex_object *ihex, struct ihex_line_data *line);
+	void (*end)(struct ihex_object *ihex);
+};
+
+int8_t ihex_init(struct ihex_object *ihex, struct ihex_line_interface *iface);
+int8_t ihex_parse_line(struct ihex_object *ihex, uint8_t *line, uint32_t size);
+void ihex_reset(struct ihex_object *ihex);
+
+
+#endif /* IHEX_H */
+

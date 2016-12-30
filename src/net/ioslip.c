@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
+ */
 
 #include "ioslip.h"
 
@@ -52,7 +52,7 @@ static int8_t parse_data_byte(struct ioslip_object *slip, uint8_t ch, uint8_t *d
 	case IOSLIP_BYTE_START:
 		slip->rx_count = 0;
 		break;
-	case IOSLIP_BYTE_END:		
+	case IOSLIP_BYTE_END:
 		slip->rx_state = 0;
 		return 1;
 	case IOSLIP_BYTE_ESCAPE:
@@ -92,12 +92,12 @@ static int8_t parse_escaped_byte(struct ioslip_object *slip, uint8_t ch, uint8_t
 
 static int8_t read(void *self, uint8_t *data, uint32_t *size)
 {
-        struct ioslip_object *slip = self;
-        struct io_object *io = &slip->io;
+	struct ioslip_object *slip = self;
+	struct io_object *io = &slip->io;
 	struct io_comm_interface *comm = io->comm;
-	
+
 	uint8_t ch;
-	
+
 	while (get_char(comm, &ch) > 0) {
 		switch (slip->rx_state) {
 		case 0:
@@ -118,60 +118,60 @@ static int8_t read(void *self, uint8_t *data, uint32_t *size)
 		}
 	}
 
-        return 0;
+	return 0;
 }
 
 static int8_t write(void *self, uint8_t *data, uint32_t size)
 {
-        struct ioslip_object *slip = self;
-        struct io_object *io = &slip->io;
-        struct io_comm_interface *comm = io->comm;
-	
-        uint32_t i;
-        
-        if (put_char(comm, IOSLIP_BYTE_START) != 1) return 0;
-                
-        for (i = 0; i < size; i++) {
-                switch (data[i]) {
-                case IOSLIP_BYTE_START:
-                        if (put_char(comm, IOSLIP_BYTE_ESCAPE) != 1) return 0;
-                        if (put_char(comm, IOSLIP_ESCAPED_START) != 1) return 0;
-                        break;
-                case IOSLIP_BYTE_END:
-                        if (put_char(comm, IOSLIP_BYTE_ESCAPE) != 1) return 0;
-                        if (put_char(comm, IOSLIP_ESCAPED_END) != 1) return 0;
-                        break;
-                case IOSLIP_BYTE_ESCAPE:
-                        if (put_char(comm, IOSLIP_BYTE_ESCAPE) != 1) return 0;
-                        if (put_char(comm, IOSLIP_ESCAPED_ESCAPE) != 1) return 0;
-                        break;
-                default:
-                        if (put_char(comm, data[i]) != 1) return 0;
-                        break;
-                }
-        }
-        
-        if (put_char(comm, IOSLIP_BYTE_END) != 1) return 0;
-        
-        return 1;
+	struct ioslip_object *slip = self;
+	struct io_object *io = &slip->io;
+	struct io_comm_interface *comm = io->comm;
+
+	uint32_t i;
+
+	if (put_char(comm, IOSLIP_BYTE_START) != 1) return 0;
+
+	for (i = 0; i < size; i++) {
+		switch (data[i]) {
+		case IOSLIP_BYTE_START:
+			if (put_char(comm, IOSLIP_BYTE_ESCAPE) != 1) return 0;
+			if (put_char(comm, IOSLIP_ESCAPED_START) != 1) return 0;
+			break;
+		case IOSLIP_BYTE_END:
+			if (put_char(comm, IOSLIP_BYTE_ESCAPE) != 1) return 0;
+			if (put_char(comm, IOSLIP_ESCAPED_END) != 1) return 0;
+			break;
+		case IOSLIP_BYTE_ESCAPE:
+			if (put_char(comm, IOSLIP_BYTE_ESCAPE) != 1) return 0;
+			if (put_char(comm, IOSLIP_ESCAPED_ESCAPE) != 1) return 0;
+			break;
+		default:
+			if (put_char(comm, data[i]) != 1) return 0;
+			break;
+		}
+	}
+
+	if (put_char(comm, IOSLIP_BYTE_END) != 1) return 0;
+
+	return 1;
 }
 
 int8_t ioslip_init(void *self, struct io_comm_interface *comm, uint32_t max_rx_size)
 {
-        struct ioslip_object *slip = self;
-        struct io_object *io = &slip->io;
-        
-        if (io_init(self, comm) != 0) return -1;
-        
+	struct ioslip_object *slip = self;
+	struct io_object *io = &slip->io;
+
+	if (io_init(self, comm) != 0) return -1;
+
 	if (max_rx_size == 0) return -1;
-        if (comm == NULL) return -1;
-                
+	if (comm == NULL) return -1;
+
 	slip->max_rx_size = max_rx_size;
-        slip->rx_count = 0;
+	slip->rx_count = 0;
 	slip->rx_state = 0;
-        
-        io->read = read;
-        io->write = write;
-        
-        return 0;
+
+	io->read = read;
+	io->write = write;
+
+	return 0;
 }

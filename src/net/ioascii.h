@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
+ */
 
 #ifndef IOASCII_H
 #define IOASCII_H
@@ -28,10 +28,10 @@ THE SOFTWARE.
 #include "io.h"
 
 struct ioascii_object {
-        struct io_object io;
-        uint32_t max_rx_size;
-        uint32_t rx_count;
-        uint8_t rx_state;
+	struct io_object io;
+	uint32_t max_rx_size;
+	uint32_t rx_count;
+	uint8_t rx_state;
 };
 
 int8_t ioascii_init(void *self, struct io_comm_interface *comm, uint32_t max_rx_size);

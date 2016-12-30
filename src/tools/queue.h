@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
+ */
 
 #ifndef QUEUE_H
 #define QUEUE_H
@@ -28,12 +28,12 @@ THE SOFTWARE.
 #include <stdint.h>
 
 struct queue_object {
-        void *buf;
-        uint32_t capacity;
-        uint32_t item_size;
-        uint32_t count;
-        int8_t (*put)(void *queue, void *item);
-        int8_t (*get)(void *queue, void *item);
+	void *buf;
+	uint32_t capacity;
+	uint32_t item_size;
+	uint32_t count;
+	int8_t(*put)(void *queue, void *item);
+	int8_t(*get)(void *queue, void *item);
 };
 
 int8_t queue_init(void *self, void *buf, uint32_t capacity, uint32_t item_size);

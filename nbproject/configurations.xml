@@ -24,6 +24,7 @@
           <itemPath>src/net/ioslip.h</itemPath>
         </logicalFolder>
         <logicalFolder name="tests" displayName="tests" projectFiles="true">
+          <itemPath>src/tests/test_ihex.c</itemPath>
           <itemPath>src/tests/test_io.c</itemPath>
           <itemPath>src/tests/test_ioascii.c</itemPath>
           <itemPath>src/tests/test_iocantp.c</itemPath>
@@ -32,6 +33,8 @@
           <itemPath>src/tests/tests.h</itemPath>
         </logicalFolder>
         <logicalFolder name="tools" displayName="tools" projectFiles="true">
+          <itemPath>src/tools/ihex.c</itemPath>
+          <itemPath>src/tools/ihex.h</itemPath>
           <itemPath>src/tools/queue.c</itemPath>
           <itemPath>src/tools/queue.h</itemPath>
           <itemPath>src/tools/queuefifo.c</itemPath>
@@ -90,6 +93,8 @@
       </item>
       <item path="src/net/ioslip.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/tests/test_ihex.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="src/tests/test_io.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="src/tests/test_ioascii.c" ex="false" tool="0" flavor2="0">
@@ -101,6 +106,10 @@
       <item path="src/tests/tests.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="src/tests/tests.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/tools/ihex.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="src/tools/ihex.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/tools/queue.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -173,6 +182,10 @@
       <item path="src/net/ioslip.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="src/net/ioslip.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/tools/ihex.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="src/tools/ihex.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/tools/queue.c" ex="false" tool="0" flavor2="0">
       </item>
