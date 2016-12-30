@@ -29,7 +29,8 @@ THE SOFTWARE.
 static uint8_t check_crc(uint8_t *data, uint32_t size)
 {
 	uint8_t sum = 0;
-	while (size-- > 0) sum += *data++;
+	while (size-- > 0)
+		sum += *data++;
 	return sum;
 }
 

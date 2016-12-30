@@ -30,9 +30,13 @@ THE SOFTWARE.
 static int8_t recv_single_frame(struct iocantp_object *cantp, uint8_t *data)
 {
 	cantp->rx_size = cantp->buf[0] & 0x3F;
-	if (cantp->rx_size > cantp->max_rx_size) return 0;
-	if (cantp->rx_size > (cantp->max_frame_size - 1)) return 0;
-	if (cantp->rx_size > (cantp->data_len - 1)) return 0;
+
+	if (cantp->rx_size > cantp->max_rx_size)
+		return 0;
+	if (cantp->rx_size > (cantp->max_frame_size - 1))
+		return 0;
+	if (cantp->rx_size > (cantp->data_len - 1))
+		return 0;
 
 	memcpy(data, &cantp->buf[1], cantp->rx_size);
 	
@@ -42,9 +46,13 @@ static int8_t recv_single_frame(struct iocantp_object *cantp, uint8_t *data)
 static int8_t recv_multi_frame(struct iocantp_object *cantp, uint8_t *data)
 {
 	cantp->rx_size = (((cantp->buf[0] & 0x3F) << 8) | ((cantp->buf[1]) & 0xFF)) & 0x3FFF;
-	if (cantp->rx_size > cantp->max_rx_size) return 0;
-	if (cantp->rx_size < cantp->max_frame_size) return 0;
-	if (cantp->data_len < cantp->max_frame_size) return 0;
+
+	if (cantp->rx_size > cantp->max_rx_size)
+		return 0;
+	if (cantp->rx_size < cantp->max_frame_size)
+		return 0;
+	if (cantp->data_len < cantp->max_frame_size)
+		return 0;
 
 	memcpy(data, &cantp->buf[2], cantp->max_frame_size - 2);
 	cantp->rx_count = cantp->max_frame_size - 2;
@@ -63,7 +71,8 @@ static int8_t recv_next_frame(struct iocantp_object *cantp, uint8_t *data)
 	}
 
 	to_receive = cantp->rx_size - cantp->rx_count;
-	if (to_receive > (cantp->max_frame_size - 1)) to_receive = cantp->max_frame_size - 1;
+	if (to_receive > (cantp->max_frame_size - 1))
+		to_receive = cantp->max_frame_size - 1;
 
 	if ((cantp->data_len - 1) < to_receive) {
 		cantp->rx_state = 0;
@@ -88,10 +97,12 @@ static int8_t parse_first_frame(struct iocantp_object *cantp, uint8_t *data)
 {
 	switch (cantp->buf[0] & 0xC0) {
 	case 0x00:
-		if (recv_single_frame(cantp, data) != 0) return 1;
+		if (recv_single_frame(cantp, data) != 0)
+			return 1;
 		break;
 	case 0x40:
-		if (recv_multi_frame(cantp, data) != 0) cantp->rx_state = 1;
+		if (recv_multi_frame(cantp, data) != 0)
+			cantp->rx_state = 1;
 		break;
 	default:
 		break;
@@ -103,7 +114,8 @@ static int8_t parse_next_frame(struct iocantp_object *cantp, uint8_t *data)
 {
 	switch (cantp->buf[0] & 0xC0) {
 	case 0x80:
-		if (recv_next_frame(cantp, data) != 0) return 1;
+		if (recv_next_frame(cantp, data) != 0)
+			return 1;
 		break;
 	case 0x40:
 		recv_multi_frame(cantp, data);
@@ -127,7 +139,8 @@ static int8_t read(void *self, uint8_t *data, uint32_t *size)
 	struct io_comm_interface *comm = io->comm;
 
 	while (comm->get(cantp->buf, &cantp->data_len) > 0) {
-		if (cantp->data_len == 0) continue;
+		if (cantp->data_len == 0)
+			continue;
 
 		switch (cantp->rx_state) {
 		case 0:
@@ -160,14 +173,16 @@ static int8_t write(void *self, uint8_t *data, uint32_t size)
 	if (size <= (cantp->max_frame_size - 1)) {
 		cantp->buf[0] = size;
 		memcpy(&cantp->buf[1], data, size);
-		if (comm->put(cantp->buf, size + 1) != 1) return 0;
+		if (comm->put(cantp->buf, size + 1) != 1)
+			return 0;
 	} else if (size <= 0x3FFF) {
 		sended = 0;
 		cantp->buf[0] = 0x40 | ((size >> 8) & 0x3F);
 		cantp->buf[1] = size & 0xFF;
 		memcpy(&cantp->buf[2], data, cantp->max_frame_size - 2);
 		sended = cantp->max_frame_size - 2;
-		if (comm->put(cantp->buf, cantp->max_frame_size) != 1) return 0;
+		if (comm->put(cantp->buf, cantp->max_frame_size) != 1)
+			return 0;
 		i = 1;
 		while (sended < size) {
 			cantp->buf[0] = 0x80 | (i & 0x3F);
@@ -177,7 +192,8 @@ static int8_t write(void *self, uint8_t *data, uint32_t size)
 				to_send = (cantp->max_frame_size - 1);
 			}
 			memcpy(&cantp->buf[1], &data[sended], to_send);
-			if (comm->put(cantp->buf, to_send + 1) != 1) return 0;
+			if (comm->put(cantp->buf, to_send + 1) != 1)
+				return 0;
 			sended += to_send;
 			i++;
 		}
@@ -193,11 +209,15 @@ int8_t iocantp_init(void *self, struct io_comm_interface *comm, uint8_t *buf, ui
 	struct iocantp_object *cantp = self;
 	struct io_object *io = &cantp->io;
 
-	if (io_init(self, comm) != 0) return -1;
+	if (io_init(self, comm) != 0)
+		return -1;
 
-	if (buf == NULL) return -1;
-	if ((max_frame_size < 8) || (max_frame_size > 64)) return -1;
-	if (max_rx_size == 0) return -1;
+	if (buf == NULL)
+		return -1;
+	if ((max_frame_size < 8) || (max_frame_size > 64))
+		return -1;
+	if (max_rx_size == 0)
+		return -1;
 
 	cantp->buf = buf;
 	cantp->max_frame_size = max_frame_size;

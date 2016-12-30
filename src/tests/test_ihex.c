@@ -26,8 +26,6 @@ THE SOFTWARE.
 
 #include "tools/ihex.h"
 
-#include <stdio.h>
-
 static void data(struct ihex_object *ihex, uint32_t adr, uint8_t *data, uint8_t size);
 static void custom(struct ihex_object *ihex, struct ihex_line_data *line);
 static void end(struct ihex_object *ihex);
@@ -54,7 +52,8 @@ static void data(struct ihex_object *ihex, uint32_t adr, uint8_t *data, uint8_t 
 {
 	data_adr = adr;
 	data_size = 0;	
-	while (size-- > 0) data_bytes[data_size++] = *data++;
+	while (size-- > 0)
+		data_bytes[data_size++] = *data++;
 	data_flag = 1;
 }
 

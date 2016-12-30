@@ -33,11 +33,13 @@ static int8_t put(void *self, void *item)
 
 	memcpy(&((uint8_t*) queue->buf)[fifo->tail * queue->item_size], (uint8_t*) item, queue->item_size);
 
-	if (++fifo->tail >= queue->capacity) fifo->tail = 0;
+	if (++fifo->tail >= queue->capacity)
+		fifo->tail = 0;
 
 	if (++queue->count > queue->capacity) {
 		queue->count = queue->capacity;
-		if (++fifo->head >= queue->capacity) fifo->head = 0;
+		if (++fifo->head >= queue->capacity)
+			fifo->head = 0;
 		return 0;
 	}
 	return 1;
@@ -48,11 +50,13 @@ static int8_t get(void *self, void *item)
 	struct queuefifo_object *fifo = self;
 	struct queue_object *queue = &fifo->queue;
 
-	if (queue->count == 0) return 0;
+	if (queue->count == 0)
+		return 0;
 
 	memcpy((uint8_t*) item, &((uint8_t*) queue->buf)[fifo->head * queue->item_size], queue->item_size);
 
-	if (++fifo->head >= queue->capacity) fifo->head = 0;
+	if (++fifo->head >= queue->capacity)
+		fifo->head = 0;
 	queue->count--;
 
 	return 1;
@@ -63,7 +67,8 @@ int8_t queuefifo_init(void *self, void *buf, uint32_t capacity, uint32_t item_si
 	struct queuefifo_object *fifo = self;
 	struct queue_object *queue = &fifo->queue;
 
-	if (queue_init(queue, buf, capacity, item_size) != 0) return -1;
+	if (queue_init(queue, buf, capacity, item_size) != 0)
+		return -1;
 
 	fifo->tail = 0;
 	fifo->head = 0;

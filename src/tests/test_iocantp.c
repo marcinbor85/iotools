@@ -40,7 +40,8 @@ static uint32_t buf_tx_size;
 
 static int8_t put(uint8_t *data, uint32_t size)
 {
-	while (size-- > 0) buf_tx[buf_tx_size++] = *data++;
+	while (size-- > 0)
+		buf_tx[buf_tx_size++] = *data++;
 	return 1;
 }
 
@@ -247,7 +248,8 @@ static int iocantp_api_read(void)
 	size = 0;
 	ASSERT(io_read(&io, buf, &size) == 1);
 	ASSERT(size == 64 * 7 + 6);
-	for (i = 0; i < 64 * 7 + 6; i++) ASSERT(buf[i] == (uint8_t) (i + 1));
+	for (i = 0; i < 64 * 7 + 6; i++)
+		ASSERT(buf[i] == (uint8_t) (i + 1));
 
 	ASSERT(iocantp_init(&io, &iface, buf_8, 8, 2) == 0);
 
@@ -272,7 +274,8 @@ static int iocantp_api_write(void)
 	ASSERT(io_write(&io, NULL, 1) == -1);
 	ASSERT(io_write(&io, buf, 0) == -1);
 
-	for (i = 0; i < 2; i++) buf[i] = i + 1;
+	for (i = 0; i < 2; i++)
+		buf[i] = i + 1;
 	size = 2;
 	buf_tx_size = 0;
 	ASSERT(io_write(&io, buf, size) == 1);
@@ -281,7 +284,8 @@ static int iocantp_api_write(void)
 	ASSERT(buf_tx[1] == 0x01);
 	ASSERT(buf_tx[2] == 0x02);
 
-	for (i = 0; i < 7; i++) buf[i] = i + 1;
+	for (i = 0; i < 7; i++)
+		buf[i] = i + 1;
 	size = 7;
 	buf_tx_size = 0;
 	ASSERT(io_write(&io, buf, size) == 1);
@@ -295,7 +299,8 @@ static int iocantp_api_write(void)
 	ASSERT(buf_tx[6] == 0x06);
 	ASSERT(buf_tx[7] == 0x07);
 
-	for (i = 0; i < 8; i++) buf[i] = i + 1;
+	for (i = 0; i < 8; i++)
+		buf[i] = i + 1;
 	size = 8;
 	buf_tx_size = 0;
 	ASSERT(io_write(&io, buf, size) == 1);
@@ -312,7 +317,8 @@ static int iocantp_api_write(void)
 	ASSERT(buf_tx[9] == 0x07);
 	ASSERT(buf_tx[10] == 0x08);
 
-	for (i = 0; i < 14; i++) buf[i] = i + 1;
+	for (i = 0; i < 14; i++)
+		buf[i] = i + 1;
 	size = 14;
 	buf_tx_size = 0;
 	ASSERT(io_write(&io, buf, size) == 1);
@@ -336,7 +342,8 @@ static int iocantp_api_write(void)
 	ASSERT(buf_tx[16] == 0x82);
 	ASSERT(buf_tx[17] == 0x0E);
 
-	for (i = 0; i < 64 * 7 + 6; i++) buf[i] = i + 1;
+	for (i = 0; i < 64 * 7 + 6; i++)
+		buf[i] = i + 1;
 	size = 64 * 7 + 6;
 	buf_tx_size = 0;
 	ASSERT(io_write(&io, buf, size) == 1);

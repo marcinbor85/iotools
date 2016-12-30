@@ -30,10 +30,14 @@ int8_t queue_init(void *self, void *buf, uint32_t capacity, uint32_t item_size)
 {
 	struct queue_object *queue = self;
 
-	if (self == NULL) return -1;
-	if (buf == NULL) return -1;
-	if (capacity == 0) return -1;
-	if (item_size == 0) return -1;
+	if (self == NULL)
+		return -1;
+	if (buf == NULL)
+		return -1;
+	if (capacity == 0)
+		return -1;
+	if (item_size == 0)
+		return -1;
 
 	queue->buf = buf;
 	queue->count = 0;
@@ -49,10 +53,13 @@ int8_t queue_put(void *self, void *item)
 {
 	struct queue_object *queue = self;
 
-	if (self == NULL) return -1;
-	if (item == NULL) return -1;
+	if (self == NULL)
+		return -1;
+	if (item == NULL)
+		return -1;
 
-	if (queue->put == NULL) return -1;
+	if (queue->put == NULL)
+		return -1;
 
 	return queue->put(queue, item);
 }
@@ -61,10 +68,13 @@ int8_t queue_get(void *self, void *item)
 {
 	struct queue_object *queue = self;
 
-	if (self == NULL) return -1;
-	if (item == NULL) return -1;
+	if (self == NULL)
+		return -1;
+	if (item == NULL)
+		return -1;
 
-	if (queue->get == NULL) return -1;
+	if (queue->get == NULL)
+		return -1;
 
 	return queue->get(queue, item);
 }

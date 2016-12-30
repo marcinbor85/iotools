@@ -6,10 +6,7 @@
 - include SLIP transport protocol
 - include ASCII-based transport protocol
 - include fifo queue module
+- include i32hex parsing module
+- linux code style
 - object oriented design
 - simple unit tests
-
-### TODO:
-- [ ] intel hex parsing
-- [ ] more tests
-- [ ] other usefull stuff
